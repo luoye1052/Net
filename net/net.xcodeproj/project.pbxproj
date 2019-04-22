@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		46567341226D66F7000F646E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 46567340226D66F7000F646E /* main.m */; };
+		46A9E526226D72E0006D34C2 /* NetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A9E522226D72E0006D34C2 /* NetManager.m */; };
+		46A9E527226D72E0006D34C2 /* NetManager+UPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A9E523226D72E0006D34C2 /* NetManager+UPRequest.m */; };
+		46A9E52A226DB55F006D34C2 /* NetMangerConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A9E529226DB55F006D34C2 /* NetMangerConfigure.m */; };
 		FEE30B44B085010D0433E849 /* libPods-net.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74E5C89C146BF02D0AF5C983 /* libPods-net.a */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +30,13 @@
 		3B19C2BFC40E469A051934ED /* Pods-net.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-net.debug.xcconfig"; path = "Target Support Files/Pods-net/Pods-net.debug.xcconfig"; sourceTree = "<group>"; };
 		4656733D226D66F7000F646E /* net */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = net; sourceTree = BUILT_PRODUCTS_DIR; };
 		46567340226D66F7000F646E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		46A9E520226D6FEB006D34C2 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		46A9E522226D72E0006D34C2 /* NetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetManager.m; sourceTree = "<group>"; };
+		46A9E523226D72E0006D34C2 /* NetManager+UPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NetManager+UPRequest.m"; sourceTree = "<group>"; };
+		46A9E524226D72E0006D34C2 /* NetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetManager.h; sourceTree = "<group>"; };
+		46A9E525226D72E0006D34C2 /* NetManager+UPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NetManager+UPRequest.h"; sourceTree = "<group>"; };
+		46A9E528226DB55F006D34C2 /* NetMangerConfigure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetMangerConfigure.h; sourceTree = "<group>"; };
+		46A9E529226DB55F006D34C2 /* NetMangerConfigure.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetMangerConfigure.m; sourceTree = "<group>"; };
 		74E5C89C146BF02D0AF5C983 /* libPods-net.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-net.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A94C0B8034D70F8ACA83FBCE /* Pods-net.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-net.release.xcconfig"; path = "Target Support Files/Pods-net/Pods-net.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,6 +74,12 @@
 		4656733F226D66F7000F646E /* net */ = {
 			isa = PBXGroup;
 			children = (
+				46A9E525226D72E0006D34C2 /* NetManager+UPRequest.h */,
+				46A9E523226D72E0006D34C2 /* NetManager+UPRequest.m */,
+				46A9E524226D72E0006D34C2 /* NetManager.h */,
+				46A9E522226D72E0006D34C2 /* NetManager.m */,
+				46A9E528226DB55F006D34C2 /* NetMangerConfigure.h */,
+				46A9E529226DB55F006D34C2 /* NetMangerConfigure.m */,
 				46567340226D66F7000F646E /* main.m */,
 			);
 			path = net;
@@ -75,13 +91,13 @@
 				3B19C2BFC40E469A051934ED /* Pods-net.debug.xcconfig */,
 				A94C0B8034D70F8ACA83FBCE /* Pods-net.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
 		F47413E159FD206BB4F0AEE1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				46A9E520226D6FEB006D34C2 /* libAFNetworking.a */,
 				74E5C89C146BF02D0AF5C983 /* libPods-net.a */,
 			);
 			name = Frameworks;
@@ -169,7 +185,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46A9E527226D72E0006D34C2 /* NetManager+UPRequest.m in Sources */,
 				46567341226D66F7000F646E /* main.m in Sources */,
+				46A9E52A226DB55F006D34C2 /* NetMangerConfigure.m in Sources */,
+				46A9E526226D72E0006D34C2 /* NetManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
