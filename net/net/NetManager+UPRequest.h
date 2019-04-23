@@ -15,5 +15,8 @@
 
 
 #pragma mark - 登录
--(void)loginWithUserName:(NSString *_Nullable)userName password:(NSString *_Nullable)password   Success:(void (^_Nullable)(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject))success  failure:(void (^_Nullable)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error))failure;
+-(void)loginWithUserName:(NSString *_Nullable)userName
+                password:(NSString *_Nullable)password
+                 Success:(void (^_Nullable)(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject))success
+                 failure:(void (^_Nullable)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error))failure;
 @end

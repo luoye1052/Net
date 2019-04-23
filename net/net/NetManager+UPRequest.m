@@ -15,17 +15,27 @@
 
 
 #pragma mark - 登录
--(void)loginWithUserName:(NSString *_Nullable)userName password:(NSString *_Nullable)password   Success:(void (^_Nullable)(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject))success  failure:(void (^_Nullable)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error))failure;
+-(void)loginWithUserName:(NSString *_Nullable)userName
+                password:(NSString *_Nullable)password
+                 Success:(void (^_Nullable)(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject))success
+                 failure:(void (^_Nullable)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error))failure;
 {
      NSDictionary *dic=@{@"username":userName,@"password":password};
     [self sendPOSTRequestToServerWithURL:@""
                                 postData:dic
                                  showHud:YES
+                                progress:^(NSProgress * _Nonnull uploadProgress) {
+                                    
+                                }
                                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                                     success(task,responseObject);
+                                     if (success) {
+                                         success(task,responseObject);
+                                     }
                                  }
                                  failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                                     failure(task,error);
+                                     if (failure) {
+                                         failure(task,error);
+                                     }
                                  }];
 
 }
