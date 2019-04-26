@@ -10,13 +10,26 @@
 
 #import "NetManager.h"
 #import "NetMangerConfigure.h"
-
+static NSString *const netMangerLockName=@"com.bingyu.NetManger.lock";
+static NSString *const RequestPost=@"post";
+static inline NSString *RequesMethod(RequestMethod methodType){
+    return @[RequestPost][methodType];
+}
+@interface NetManager ()
+@property (nonatomic,copy)AFHTTPSessionManager *manger;
+@property (nonatomic,strong)NSMutableDictionary *storageTask;
+@property (nonatomic,strong)NSLock *lock;
+@end
 @implementation NetManager
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        _manger=[AFHTTPSessionManager manager];
+        _lock=[[NSLock alloc]init];
+        _lock.name=netMangerLockName;
+       
     }
     return self;
 }
@@ -26,12 +39,12 @@
  @param success 成功回调
  @param failure 失败回调
  */
-- (void)sendPOSTRequestToServerWithURL:(NSString *)urlString
+- (NSURLSessionDataTask *)sendPOSTRequestToServerWithURL:(NSString *)urlString
                                success:(void (^)(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject))success
                                failure:(void (^)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error))failure
 {
     
-   [self sendPOSTRequestToServerWithURL:urlString
+   return [self sendPOSTRequestToServerWithURL:urlString
                                postData:nil
                                 showHud:NO
                                progress:nil
@@ -57,7 +70,7 @@
  @param success 成功回调
  @param failure 失败回调
  */
-- (void)sendPOSTRequestToServerWithURL:(NSString *)urlString
+- (NSURLSessionDataTask *)sendPOSTRequestToServerWithURL:(NSString *)urlString
                               postData:(NSDictionary*)messageDic
                                showHud:(BOOL)showHud
                               progress:(void (^)(NSProgress * _Nonnull))uploadProgress
@@ -67,29 +80,29 @@
     if ([self.delegate respondsToSelector:@selector(requestStart:)]) {
         [self.delegate requestStart:self];
     }
-    NSString *URL = [NetMangerConfigure shareConfigure].baseUrl;
-    URL = [URL stringByAppendingString:urlString];
-    AFHTTPSessionManager *manger=[AFHTTPSessionManager manager];
-    manger.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json",@"text/html", nil];
-    NSURLSessionDataTask *DataTask=[manger POST:URL
-      parameters:messageDic
-        progress:uploadProgress
-         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-             if (success) {
-                success(task,responseObject);
-             }
-             if ([self.delegate respondsToSelector:@selector(requestDidFinished:result:)]) {
-                 [self.delegate requestDidFinished:self result:responseObject];
-             }
-         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-             if (failure) {
-                 failure(task,error);
-             }
-             if ([self.delegate respondsToSelector:@selector(requestError:error:)]) {
-                 [self.delegate requestError:self error:error];
-             }
-         }];
     
+    NSURLSessionDataTask *DataTask =[self dataTaskWithHTTPMethod:RequestMethodPOST
+                                                       URLString:urlString
+                                                      parameters:messageDic
+                                                  uploadProgress:uploadProgress
+                                                downloadProgress:nil
+                                                         success:^(NSURLSessionDataTask *task, id responseObject) {
+                                                                if (success) {
+                                                                    success(task,responseObject);
+                                                                }
+                                                                if ([self.delegate respondsToSelector:@selector(requestDidFinished:result:)]) {
+                                                                    [self.delegate requestDidFinished:self result:responseObject];
+                                                                }
+                                                         }
+                                                         failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                                             if(failure){
+                                                                 failure(task,error);
+                                                             }
+                                                             if([self.delegate respondsToSelector:@selector(requestError:error:)]){
+                                                                 [self.delegate requestError:self error:error];
+                                                             }
+                                                         }];
+    return DataTask;
 }
 //上传文件
 - (void)uploadWithRequestUrl:(NSString *)url
@@ -127,5 +140,52 @@ constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
 
 
 
-
+- (NSURLSessionDataTask *)dataTaskWithHTTPMethod:(RequestMethod)method
+                                       URLString:(NSString *)URLString
+                                      parameters:(id)parameters
+                                  uploadProgress:(nullable void (^)(NSProgress *uploadProgress)) uploadProgress
+                                downloadProgress:(nullable void (^)(NSProgress *downloadProgress)) downloadProgress
+                                         success:(void (^)(NSURLSessionDataTask *, id))success
+                                         failure:(void (^)(NSURLSessionDataTask *, NSError *))failure
+{
+    
+    NSString *URLStr = [[NetMangerConfigure shareConfigure].baseUrl stringByAppendingString:URLString];
+    
+    _manger.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain",@"application/json",@"text/html", nil];
+    NSError *serializationError = nil;
+    NSMutableURLRequest *request = [_manger.requestSerializer requestWithMethod:RequesMethod(method) URLString:URLStr parameters:parameters error:&serializationError];
+    
+    if (serializationError) {
+        if (failure) {
+            dispatch_async(_manger.completionQueue ?: dispatch_get_main_queue(), ^{
+                failure(nil, serializationError);
+            });
+        }
+        
+        return nil;
+    }
+    
+    __block NSURLSessionDataTask *dataTask = nil;
+    dataTask = [_manger dataTaskWithRequest:request
+                          uploadProgress:uploadProgress
+                        downloadProgress:downloadProgress
+                       completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
+                           if (error) {
+                               if (failure) {
+                                   failure(dataTask, error);
+                               }
+                           } else {
+                               if (success) {
+                                   success(dataTask, responseObject);
+                               }
+                           }
+                       }];
+    
+    return dataTask;
+}
+-(void)setDataTask:(NSURLSessionDataTask *)dataTask taskIdentifier:(NSUInteger)taskIdentifier{
+    [self.lock lock];
+    self.storageTask[@(taskIdentifier)]=dataTask;
+    [self.lock unlock];
+}
 @end
